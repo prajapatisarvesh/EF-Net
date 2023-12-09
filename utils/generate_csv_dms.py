@@ -8,13 +8,14 @@ if __name__ == '__main__':
     os.chdir('..')
     try:
         os.chdir('data')
+        os.chdir('dms-dataset-final')
         if len(os.listdir()) != 3:
             raise ValueError('[-] All datasets have not been downloaded')
     except Exception as e:
         print('[-] Data folder has not been populated, please go over the repo\'s readme and populate the data folder.')
         print('\n[+] The program will now exit')
         # sys.exit(1)
-    os.chdir('dms-dataset-final')
+    
     ## train images
     train_images = sorted(glob.glob(f'{os.getcwd()}/images/train/*.jpg'))
     train_labels = [a.replace('/images/train', '/labels/train').replace('.jpg', '.png') for a in train_images]
