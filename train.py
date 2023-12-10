@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.tensorboard import writer
 
-writer = writer.SummaryWriter(f'runs/unet-segmentation')
+writer = writer.SummaryWriter(log_dir='runs')
 
 def train_unet_segmentation():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -124,7 +124,7 @@ def train_srcnn_regression():
             # loop.set_postfix(loss=loss.item())
         epoch_loss /= len(train)
         writer.add_scalar("Loss/train", epoch_loss, epoch)
-        torch.save(model.state_dict(), f'checkpoints/epoch_{epoch}.pt')
+        torch.save(model.state_dict(), f'checkpoints/epoch_srcnn_{epoch}.pt')
 
 
 def train_unet_regression():
@@ -178,13 +178,14 @@ def train_unet_regression():
             # loop.set_postfix(loss=loss.item())
         epoch_loss /= len(train)
         writer.add_scalar("Loss/train", epoch_loss, epoch)
-        torch.save(model.state_dict(), f'checkpoints/epoch_{epoch}.pt')
+        torch.save(model.state_dict(), f'checkpoints/epoch_unetr_{epoch}.pt')
 
 
 
 if __name__ == '__main__':
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    train_unet_regression()
+    # train_unet_regression()
+    train_srcnn_regression()
     # vast_data = VastDataLoader('data/vast_data/labeled_data/vast_data.csv', os.getcwd())
     # vast_data.__getitem__(0)
