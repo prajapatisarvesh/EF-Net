@@ -70,6 +70,7 @@ mappings = {
 class AppleMLDMSLoader(BaseDataLoader):
     def __init__(self, csv_file, root_dir, mapped=False, transform=None):
         super().__init__(csv_file=csv_file, root_dir=root_dir, transform=transform)
+        self.mapped = mapped
         print("[+] Data Loaded with rows: ", super().__len__())
         
     def convert_to_friction(self, mask):
