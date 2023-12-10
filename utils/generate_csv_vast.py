@@ -16,5 +16,10 @@ if __name__ == '__main__':
         # sys.exit(1)
     csv_path = os.getcwd()
     os.chdir('labeled_data')
-    for dir in sorted(os.listdir()):
-        pass
+    with open('vast_data.csv', 'w+') as f:
+        for dir in sorted(os.listdir()):
+            images = sorted(glob.glob(f'{os.getcwd()}/{dir}/*.jpg'))
+            spectral = sorted(glob.glob(f'{os.getcwd()}/{dir}/*spec.npy'))
+            for i,j in zip(images, spectral):
+                f.writelines(f'{i},{j}\n')
+        
