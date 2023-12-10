@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import torch
 import torchvision
 from tqdm import trange, tqdm
-from model.model import UNet
+from model.model import UNet, SRCNN
 from albumentations.pytorch import ToTensorV2
 import albumentations as A
 from torch.optim import Adam
@@ -34,14 +34,12 @@ def train_unet_segmentation():
     train_dataset, test_dataset = torch.utils.data.random_split(data, [train_set, test_set])
     train = torch.utils.data.DataLoader(train_dataset, batch_size=32, pin_memory=True, shuffle=True)
     test = torch.utils.data.DataLoader(test_dataset, batch_size=32, pin_memory=True, shuffle=True)
-    model = UNet(out_channels=60).to(device)
-    loss_fn = nn.CrossEntropyLoss()
+    model = SRCNN().to(device)
+    loss_fn = nn.MSELoss()
     optimizer = Adam(model.parameters(), lr=3e-4)
     scaler = torch.cuda.amp.GradScaler()
     NUM_EPOCHS  = 500
-    testing_batch = next(iter(test))
-    testing_batch_image = testing_batch[0].to(device)
-    testing_batch_mask = testing_batch[1].to(device).type(torch.long)
+
     # print()
     for epoch in range(NUM_EPOCHS):
         # print(epoch)
@@ -50,13 +48,14 @@ def train_unet_segmentation():
         for batch_idx, (data, targets) in enumerate(train):
             data = data.to(device)
             targets = targets.to(device)
-            targets = targets.type(torch.long)
             
             # forward
             with torch.cuda.amp.autocast():
                 predictions = model(data)
+                
+                predictions = predictions.view(-1, 224, 224)
                 # print(data.shape, targets.shape, predictions.shape)
-                loss = loss_fn(predictions, targets)
+                loss = loss_fn(predictions, targets.float())
                 # print(loss)
             epoch_loss += loss
             # backward

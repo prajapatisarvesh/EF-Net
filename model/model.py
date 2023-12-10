@@ -2,8 +2,8 @@ from typing import List
 
 import torch
 from torch import nn
-
-
+import torch.nn.functional as F
+from base.base_model import BaseModel
 
 class encoding_block(nn.Module):
     def __init__(self,in_channels, out_channels):
@@ -67,4 +67,24 @@ class UNet(nn.Module):
         x = torch.cat((skip_connections[3], x), dim=1)
         x = self.conv8(x)
         x = self.final_layer(x)
+        return x
+    
+
+class SRCNN(BaseModel):
+    def __init__(self):
+        super().__init__()
+        ### First conv2d layer, which takes in bicubic interpolated image
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=9, padding=4)
+        ### Non linear mapping
+        self.conv2 = nn.Conv2d(in_channels=64, out_channels=32, kernel_size=1, padding=0)
+        ### Output for SRCNN
+        self.conv3 = nn.Conv2d(in_channels=32, out_channels=1, kernel_size=5, padding=2)
+
+    '''
+    Forward function for tensors
+    '''
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = self.conv3(x)
         return x
