@@ -4,6 +4,9 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from base.base_model import BaseModel
+from torchvision.models import densenet169
+from torchvision.models.feature_extraction import create_feature_extractor
+
 
 class encoding_block(nn.Module):
     def __init__(self,in_channels, out_channels):
@@ -87,4 +90,33 @@ class SRCNN(BaseModel):
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
         x = self.conv3(x)
+        return x
+    
+    
+class EndToEndFrictionEstimation(BaseModel):
+    def __init__(self,block_indices=[0,1]):
+        super().__init__()
+        self.densenet = densenet169(pretrained=True)
+        for param in self.densenet.parameters():
+            param.requires_grad = False
+        
+        return_nodes = {
+            "features.transition1.pool": "features1",
+            "features.denseblock2.denselayer12.conv2": "features2",
+        }
+        self.model = create_feature_extractor(self.densenet, return_nodes=return_nodes)
+        self.conv1 = nn.Conv2d(in_channels=160, out_channels=64, kernel_size=(3,3), stride=1, padding=0)
+        self.conv2 = nn.Conv2d(in_channels=64, out_channels=9, kernel_size=(3,3), stride=1, padding=0)
+        self.fc1 = nn.Linear(in_features=24*24*9, out_features=1550)
+        self.fc2 = nn.Linear(in_features=1550, out_features=1550)
+
+
+    def forward(self, x):
+        x = self.model(x)
+        x = torch.cat((x['features1'], x['features2']), dim=1)
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = x.view(-1, 24*24*9)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
         return x
