@@ -272,7 +272,7 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, dest="epochs", required=False, default=500, help='Number of epochs to train')
     parser.add_argument('--batch_size', type=int, dest="batch_size", required=False, default=100, help='Batch size')
     parser.add_argument('--lr', type=float, dest="lr", required=False, default=0.001, help='Learning rate')
-    parser.add_argument('--device', type=str, dest="device", required=False, default= 'cuda' if torch.cuda.is_available() else 'cpu': , help='Device to train on')
+    parser.add_argument('--device', type=str, dest="device", required=False, default= 'cuda', help='Device to train on')
     parser.add_argument('--log_dir', type=str, dest="log_dir", required=False, default= 'runs/unet_reg', help='Log directory for tensorboard')
     
     arg = parser.parse_args()
