@@ -30,7 +30,10 @@ from torch.utils.tensorboard import writer
 import argparse
 
 
-
+'''
+Train function for UNET Segmentation
+Saves weights after every iteration.
+'''
 def train_unet_segmentation(epochs=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
     device = device
     transform = A.Compose([
@@ -50,7 +53,7 @@ def train_unet_segmentation(epochs=500, batch_size=100, lr=3e-4, device='cuda' i
     optimizer = Adam(model.parameters(), lr=lr)
     scaler = torch.cuda.amp.GradScaler()
 
-
+    ### Start epoch
     for epoch in range(epochs):
         epoch_loss = 0.0
         for batch_idx, (data, targets) in enumerate(train):
@@ -76,6 +79,11 @@ def train_unet_segmentation(epochs=500, batch_size=100, lr=3e-4, device='cuda' i
         writer.add_scalar("Loss/train", epoch_loss, epoch)
         torch.save(model.state_dict(), f'checkpoints/epoch_{epoch}.pt')
 
+
+'''
+Train function for SRCNN Regression
+Saves weights after every iteration.
+'''
 def train_srcnn_regression(epochs=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
     device = device
     transform = A.Compose([
@@ -122,74 +130,11 @@ def train_srcnn_regression(epochs=500, batch_size=100, lr=3e-4, device='cuda' if
         torch.save(model.state_dict(), f'checkpoints/epoch_srcnn_{epoch}.pt')
 
 
-def test_srcnn_regression():
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    transform = A.Compose([
-        A.Resize(224,224),
-        A.augmentations.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
-        ToTensorV2()
-    ])
-    device='cpu'
-    data = AppleMLDMSLoader(csv_file='data/dms-dataset-final/train.csv', root_dir=os.getcwd(), mapped=True, transform=transform)
-    train_set = int(0.8 * data.__len__())
-    test_set = data.__len__() - train_set
-    train_dataset, test_dataset = torch.utils.data.random_split(data, [train_set, test_set])
-    train = torch.utils.data.DataLoader(train_dataset, batch_size=32, pin_memory=True, shuffle=True)
-    test = torch.utils.data.DataLoader(test_dataset, batch_size=32, pin_memory=True, shuffle=True)
-    # model = SRCNN().to(device)
-    model = UNet(out_channels=1).to(device)
-    model.load_state_dict(torch.load('checkpoints/epoch_unetr_112.pt'))
-    # model.load_state_dict(torch.load('checkpoints/epoch_srcnn_99.pt'))
-    for x,y in test:
-        x = x.to(device)
-        fig , ax =  plt.subplots(3, 3, figsize=(18, 18))
-        softmax = nn.Softmax(dim=1)
-        preds = model(x).to('cpu').detach()
-        print(preds.min(), preds.max(), y.min(), y.max(), preds.shape, y.shape)
-        img1 = np.transpose(np.array(x[0,:,:,:].to('cpu')),(1,2,0))
-        preds1 = np.array(preds[0,:,:])
-        mask1 = np.array(y[0,:,:])
-        print(preds1.max(), preds1.min())
-        print(mask1.max(), mask1.min())
-        img2 = np.transpose(np.array(x[1,:,:,:].to('cpu')),(1,2,0))
-        preds2 = np.array(preds[1,:,:])
-        mask2 = np.array(y[1,:,:])
-        img3 = np.transpose(np.array(x[2,:,:,:].to('cpu')),(1,2,0))
-        preds3 = np.array(preds[2,:,:])
-        mask3 = np.array(y[2,:,:])
-        ax[0,0].set_title('Image')
-        ax[0,1].set_title('Prediction')
-        ax[0,2].set_title('Mask')
-        ax[1,0].set_title('Image')
-        ax[1,1].set_title('Prediction')
-        ax[1,2].set_title('Mask')
-        ax[2,0].set_title('Image')
-        ax[2,1].set_title('Prediction')
-        ax[2,2].set_title('Mask')
-        ax[0][0].axis("off")
-        ax[1][0].axis("off")
-        ax[2][0].axis("off")
-        ax[0][1].axis("off")
-        ax[1][1].axis("off")
-        ax[2][1].axis("off")
-        ax[0][2].axis("off")
-        ax[1][2].axis("off")
-        ax[2][2].axis("off")
-        print('*************', img1.shape, preds1.shape, mask1.shape)
-        print(mask1.max(), mask1.min())
-        print(preds1.max(), preds1.min())
-        ax[0][0].imshow(img1)
-        ax[0][1].imshow(preds1[0,:,:])
-        ax[0][2].imshow(mask1)
-        ax[1][0].imshow(img2)
-        ax[1][1].imshow(preds2[0,:,:])
-        ax[1][2].imshow(mask2)
-        ax[2][0].imshow(img3)
-        ax[2][1].imshow(preds3[0,:,:])
-        ax[2][2].imshow(mask3)
-        plt.show()
-        break
 
+'''
+Train function for UNET Regression
+Saves weights after every iteration.
+'''
 def train_unet_regression(epochs=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
     device = device
     transform = A.Compose([
@@ -238,7 +183,11 @@ def collate_fn(batch):
     batch = list(filter(lambda x: x is not None, batch))
     return torch.utils.data.dataloader.default_collate(batch)
 
-
+'''
+Train End-to-End Friction Estimation
+Save weights after every iteration
+For good results, train above 50 epochs.
+'''
 def train_end_to_end_friction_estimation(epochs=500, batch_size=100, lr=0.001, device='cuda' if torch.cuda.is_available() else 'cpu'):
     vast_data = VastDataLoader('data/vast_data/labeled_data/vast_data.csv', os.getcwd())
     train = DataLoader(vast_data, collate_fn=collate_fn, batch_size=batch_size, pin_memory=True, shuffle=True)
