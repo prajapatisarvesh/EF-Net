@@ -34,14 +34,24 @@ from torchmetrics import Dice
 from torchmetrics.regression import MeanSquaredError
 
 
+'''
+Collate function for clearning the vast dataset
+'''
 def collate_fn(batch):
     batch = list(filter(lambda x: x is not None, batch))
     return torch.utils.data.dataloader.default_collate(batch)
 
-
+'''
+Tests all the proposed methods
+1. EF-NET
+2. SRCNN
+3. UNETR
+4. UNETS
+'''
 def test_all_methods():
+    # Define device
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-    
+    # Define model and dataloader
     model_efnet = EndToEndFrictionEstimation().to(device)
     
     vast_data = VastDataLoader('data/vast_data/labeled_data/vast_data.csv', os.getcwd())
@@ -51,6 +61,7 @@ def test_all_methods():
     train = torch.utils.data.DataLoader(train_dataset, batch_size=32, pin_memory=True, shuffle=True)
     test = torch.utils.data.DataLoader(test_dataset, collate_fn=collate_fn, batch_size=500, pin_memory=True, shuffle=True)
     model_efnet.load_state_dict(torch.load('checkpoints/EFNET.pt',map_location='cuda:0'))
+    # Test a small batch of images for EF-Net
     for batch_idx, (data, targets) in enumerate(test):
         x = data.to(device)
         x = torch.transpose(x, 2, 3)
@@ -69,6 +80,7 @@ def test_all_methods():
         img3 = np.transpose(np.array(x[2,:,:,:].to('cpu')),(1,2,0))
         preds3 = np.array(preds[2,:])
         mask3 = np.array(y[2,:])
+        ### Plot function
         fig , ax =  plt.subplots(3, 3, figsize=(18, 18))
         ax[0,0].set_title('Image')
         ax[0,1].set_title('Prediction')
@@ -99,6 +111,8 @@ def test_all_methods():
         ax[2][2].plot(mask3)
         plt.show()
         break
+    
+    ### Non spectral stuff and plots 
     model_srcnn = SRCNN().to(device)
     model_unetr = UNet(out_channels=1).to(device)
     model_unets = UNet(out_channels=60).to(device)
