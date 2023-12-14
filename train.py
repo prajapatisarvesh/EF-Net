@@ -1,3 +1,13 @@
+'''
+LAST UPDATE: 2023.12.10
+Course: CS7180
+AUTHOR: Sarvesh Prajapati (SP), Abhinav Kumar (AK), Rupesh Pathak (RP)
+
+E-MAIL: prajapati.s@northeastern.edu, kumar.abhina@northeastern.edu, pathal.r@northeastern.edu
+DESCRIPTION: 
+
+
+'''
 import torch
 from torch.utils.data import DataLoader
 import torch.nn as nn
@@ -21,7 +31,7 @@ import argparse
 
 
 
-def train_unet_segmentation(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
+def train_unet_segmentation(epochs=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
     device = device
     transform = A.Compose([
         A.Resize(224,224),
@@ -39,10 +49,9 @@ def train_unet_segmentation(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cud
     loss_fn = nn.CrossEntropyLoss()
     optimizer = Adam(model.parameters(), lr=lr)
     scaler = torch.cuda.amp.GradScaler()
-    NUM_EPOCHS  = NUM_EPOCHS
 
 
-    for epoch in range(NUM_EPOCHS):
+    for epoch in range(epochs):
         epoch_loss = 0.0
         for batch_idx, (data, targets) in enumerate(train):
             data = data.to(device)
@@ -61,13 +70,13 @@ def train_unet_segmentation(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cud
             scaler.step(optimizer)
             scaler.update()
             if batch_idx % 10 == 0:
-                print(f"Epoch [{epoch}/{NUM_EPOCHS}] Batch {batch_idx}/{len(train)} \
+                print(f"Epoch [{epoch}/{epochs}] Batch {batch_idx}/{len(train)} \
                       Loss: {loss}")
         epoch_loss /= len(train)
         writer.add_scalar("Loss/train", epoch_loss, epoch)
         torch.save(model.state_dict(), f'checkpoints/epoch_{epoch}.pt')
 
-def train_srcnn_regression(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
+def train_srcnn_regression(epochs=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
     device = device
     transform = A.Compose([
         A.Resize(224,224),
@@ -86,10 +95,9 @@ def train_srcnn_regression(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cuda
     loss_fn = nn.MSELoss()
     optimizer = Adam(model.parameters(), lr=lr)
     scaler = torch.cuda.amp.GradScaler()
-    NUM_EPOCHS  = NUM_EPOCHS
 
     # print()
-    for epoch in range(100, NUM_EPOCHS):
+    for epoch in range(100, epochs):
         epoch_loss = 0.0
         for batch_idx, (data, targets) in enumerate(train):
             data = data.to(device)
@@ -107,7 +115,7 @@ def train_srcnn_regression(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cuda
             scaler.step(optimizer)
             scaler.update()
             if batch_idx % 10 == 0:
-                print(f"Epoch [{epoch}/{NUM_EPOCHS}] Batch {batch_idx}/{len(train)} \
+                print(f"Epoch [{epoch}/{epochs}] Batch {batch_idx}/{len(train)} \
                       Loss: {loss}")
         epoch_loss /= len(train)
         writer.add_scalar("Loss/train", epoch_loss, epoch)
@@ -182,7 +190,7 @@ def test_srcnn_regression():
         plt.show()
         break
 
-def train_unet_regression(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
+def train_unet_regression(epochs=500, batch_size=100, lr=3e-4, device='cuda' if torch.cuda.is_available() else 'cpu'):
     device = device
     transform = A.Compose([
         A.Resize(224,224),
@@ -200,10 +208,9 @@ def train_unet_regression(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cuda'
     loss_fn = nn.MSELoss()
     optimizer = Adam(model.parameters(), lr=lr)
     scaler = torch.cuda.amp.GradScaler()
-    NUM_EPOCHS  = NUM_EPOCHS
 
     # print()
-    for epoch in range(NUM_EPOCHS):
+    for epoch in range(epochs):
         epoch_loss = 0.0
         for batch_idx, (data, targets) in enumerate(train):
             data = data.to(device)
@@ -221,7 +228,7 @@ def train_unet_regression(NUM_EPOCHS=500, batch_size=100, lr=3e-4, device='cuda'
             scaler.step(optimizer)
             scaler.update()
             if batch_idx % 10 == 0:
-                print(f"Epoch [{epoch}/{NUM_EPOCHS}] Batch {batch_idx}/{len(train)} \
+                print(f"Epoch [{epoch}/{epochs}] Batch {batch_idx}/{len(train)} \
                       Loss: {loss}")
         epoch_loss /= len(train)
         writer.add_scalar("Loss/train", epoch_loss, epoch)
@@ -232,14 +239,14 @@ def collate_fn(batch):
     return torch.utils.data.dataloader.default_collate(batch)
 
 
-def train_end_to_end_friction_estimation(NUM_EPOCHS=500, batch_size=100, lr=0.001, device='cuda' if torch.cuda.is_available() else 'cpu'):
+def train_end_to_end_friction_estimation(epochs=500, batch_size=100, lr=0.001, device='cuda' if torch.cuda.is_available() else 'cpu'):
     vast_data = VastDataLoader('data/vast_data/labeled_data/vast_data.csv', os.getcwd())
     train = DataLoader(vast_data, collate_fn=collate_fn, batch_size=batch_size, pin_memory=True, shuffle=True)
     model = EndToEndFrictionEstimation().to(device)
     loss_fn = nn.MSELoss()
     optimizer = Adam(model.parameters(), lr=lr)
     scaler = torch.cuda.amp.GradScaler()
-    for epoch in range(0,NUM_EPOCHS):
+    for epoch in range(0,epochs):
             epoch_loss = 0.0
             for batch_idx, (data, targets) in enumerate(train):
                 data = data.to(device)
@@ -256,7 +263,7 @@ def train_end_to_end_friction_estimation(NUM_EPOCHS=500, batch_size=100, lr=0.00
                 scaler.step(optimizer)
                 scaler.update()
                 if batch_idx % 10 == 0:
-                    print(f"Epoch [{epoch}/{NUM_EPOCHS}] Batch {batch_idx}/{len(train)} \
+                    print(f"Epoch [{epoch}/{epochs}] Batch {batch_idx}/{len(train)} \
                         Loss: {loss}")
             epoch_loss /= len(train)
             writer.add_scalar("Loss/train", epoch_loss, epoch)
@@ -264,30 +271,30 @@ def train_end_to_end_friction_estimation(NUM_EPOCHS=500, batch_size=100, lr=0.00
 
 
 if __name__ == '__main__':
-    
-    
+    '''
+    Adding Arg Parser for the program to take in 
+    '''
     parser = argparse.ArgumentParser(description='Train a model')
-    
-    parser.add_argument('--model', type=str, dest="model", required=True, default='endtoend', help='Model to train')
-    parser.add_argument('--epochs', type=int, dest="epochs", required=False, default=500, help='Number of epochs to train')
+    parser.add_argument('--model', type=str, dest="model", required=False, default='endtoend', help='Model to train')
+    parser.add_argument('--epochs', type=int, dest="epochs", required=False, default=10, help='Number of epochs to train')
     parser.add_argument('--batch_size', type=int, dest="batch_size", required=False, default=100, help='Batch size')
-    parser.add_argument('--lr', type=float, dest="lr", required=False, default=0.001, help='Learning rate')
+    parser.add_argument('--lr', type=float, dest="lr", required=False, default=3e-4, help='Learning rate')
     parser.add_argument('--device', type=str, dest="device", required=False, default= 'cuda', help='Device to train on')
-    parser.add_argument('--log_dir', type=str, dest="log_dir", required=False, default= 'runs/unet_reg', help='Log directory for tensorboard')
+    parser.add_argument('--log_dir', type=str, dest="log_dir", required=False, default='runs/', help='Log directory for tensorboard')
     
     arg = parser.parse_args()
     writer = writer.SummaryWriter(log_dir='arg.log_dir')
     device = arg.device
     
     if arg.model == 'endtoend':
-        train_end_to_end_friction_estimation(epoch=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
+        train_end_to_end_friction_estimation(epochs=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
         
     elif arg.model == 'unet_reg':
-        train_unet_regression(epoch=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
+        train_unet_regression(epochs=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
     
     elif arg.model == 'unet_seg':
-        train_unet_segmentation(epoch=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
+        train_unet_segmentation(epochs=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
     
     elif arg.model == 'srcnn':
-        train_srcnn_regression(epoch=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
+        train_srcnn_regression(epochs=arg.epochs, batch_size=arg.batch_size, lr=arg.lr, device=arg.device)
     

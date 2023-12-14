@@ -64,4 +64,4 @@ class VastDataLoader(BaseDataLoader):
         spectral_data = torch.tensor(spectral_data)
         spectral_data = spectral_data[self.min_ind:self.max_ind]
         data = torch.clamp((spectral_data - self.dark_min) / (self.light_max - self.dark_min + 1e-6), min=0, max=1)
-        return transformed_image, data
+        return transformed_image, data.float()

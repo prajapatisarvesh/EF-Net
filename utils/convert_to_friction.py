@@ -1,3 +1,13 @@
+'''
+LAST UPDATE: 2023.12.10
+Course: CS7180
+AUTHOR: Sarvesh Prajapati (SP), Abhinav Kumar (AK), Rupesh Pathak (RP)
+
+E-MAIL: prajapati.s@northeastern.edu, kumar.abhina@northeastern.edu, pathal.r@northeastern.edu
+DESCRIPTION: 
+
+
+'''
 import numpy as np
 import yaml
 import os
