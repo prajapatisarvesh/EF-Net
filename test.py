@@ -6,6 +6,9 @@ AUTHOR: Sarvesh Prajapati (SP), Abhinav Kumar (AK), Rupesh Pathak (RP)
 E-MAIL: prajapati.s@northeastern.edu, kumar.abhina@northeastern.edu, pathal.r@northeastern.edu
 DESCRIPTION: 
 
+TEST All the models at once
+
+In plotting mode, removing the break will give evaluation metrices for all the images in the test set
 
 '''
 import torch
@@ -31,11 +34,24 @@ from torchmetrics import Dice
 from torchmetrics.regression import MeanSquaredError
 
 
-
+def collate_fn(batch):
+    batch = list(filter(lambda x: x is not None, batch))
+    return torch.utils.data.dataloader.default_collate(batch)
 
 
 def test_all_methods():
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    
+    model_efnet = EndToEndFrictionEstimation().to(device)
+    
+    vast_data = VastDataLoader('data/vast_data/labeled_data/vast_data_train.csv', os.getcwd())
+    train_set = int(0.7 * vast_data.__len__())
+    test_set = vast_data.__len__() - train_set
+    train_dataset, test_dataset = torch.utils.data.random_split(vast_data, [train_set, test_set])
+    train = torch.utils.data.DataLoader(train_dataset, batch_size=32, pin_memory=True, shuffle=True)
+    test = torch.utils.data.DataLoader(test_dataset, collate_fn=collate_fn, batch_size=500, pin_memory=True, shuffle=True)
+    model_efnet.load_state_dict(torch.load('checkpoints/epoch_unseen_new_64.pt'))
+
     model_srcnn = SRCNN().to(device)
     model_unetr = UNet(out_channels=1).to(device)
     model_unets = UNet(out_channels=60).to(device)
