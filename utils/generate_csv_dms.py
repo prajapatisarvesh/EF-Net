@@ -6,7 +6,7 @@ AUTHOR: Sarvesh Prajapati (SP), Abhinav Kumar (AK), Rupesh Pathak (RP)
 E-MAIL: prajapati.s@northeastern.edu, kumar.abhina@northeastern.edu, pathal.r@northeastern.edu
 DESCRIPTION: 
 
-
+Generates CSV for Apple Dataset
 '''
 import os
 import pathlib

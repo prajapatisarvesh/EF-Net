@@ -1,3 +1,15 @@
+'''
+LAST UPDATE: 2023.12.10
+Course: CS7180
+AUTHOR: Sarvesh Prajapati (SP), Abhinav Kumar (AK), Rupesh Pathak (RP)
+
+E-MAIL: prajapati.s@northeastern.edu, kumar.abhina@northeastern.edu, pathal.r@northeastern.edu
+DESCRIPTION: 
+
+Dataloader for VAST and Apple DMS dataset
+
+
+'''
 import torch
 import os
 import torch.nn as nn
@@ -12,13 +24,20 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils.convert_to_friction import convert_to_friction
 
 
+
 class AppleMLDMSLoader(BaseDataLoader):
+    '''
+    AppleMLDMSLoader: Dataloader for Apple DMS Dataset
+    Takes in the generated CSV file and the rootdir of the folder
+    '''
     def __init__(self, csv_file, root_dir, mapped=False, transform=None):
         super().__init__(csv_file=csv_file, root_dir=root_dir, transform=transform)
         self.mapped = mapped
         print("[+] Data Loaded with rows: ", super().__len__())
         
-        
+    '''
+    __getitem__ returns image and mask of the image after performing the transformation
+    '''
     def __getitem__(self, idx):
         image = self.csv_dataframe.iloc[idx, 0]
         mask = self.csv_dataframe.iloc[idx, 1]
@@ -35,6 +54,10 @@ class AppleMLDMSLoader(BaseDataLoader):
     
 
 class VastDataLoader(BaseDataLoader):
+    '''
+    VastDataLoader: Dataloader for VAST Dataset
+    Takes in the generated CSV file and the rootdir of the folder
+    '''
     def __init__(self, csv_file, root_dir):
         super().__init__(csv_file=csv_file, root_dir=root_dir, transform=None)
         self.transform_ = transforms.Compose([
@@ -52,7 +75,9 @@ class VastDataLoader(BaseDataLoader):
         # print(self.dark_min.shape, self.light_max.shape)
         print("[+] Data Loaded with rows: ", super().__len__())
     
-
+    '''
+    __getitem__ returns image and mask of the image after performing the transformation
+    '''
     def __getitem__(self, idx):
         image = self.csv_dataframe.iloc[idx, 0]
         spectral_data = self.csv_dataframe.iloc[idx, 1]
