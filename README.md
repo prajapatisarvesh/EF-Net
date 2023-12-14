@@ -2,7 +2,7 @@
 
 Submitted by - Sarvesh, Abhinav and Rupesh
 
-![https://github.com/prajapatisarvesh/EF-Net/misc/EFENET_NEW.jpg](https://github.com/prajapatisarvesh/EF-Net/misc/EFENET_NEW.jpg)
+![Model Architecture](https://github.com/prajapatisarvesh/EF-Net/blob/main/misc/EFENET_NEW.jpg)
 
 Note:
 
