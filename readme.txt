@@ -2,11 +2,6 @@
 
 Submitted by - Sarvesh, Abhinav and Rupesh
 
-![Model Architecture](https://github.com/prajapatisarvesh/EF-Net/blob/main/misc/EFENET_NEW.jpg)
-
-Note:
-
-`This code is part of CS7180 Final Project, and contains our work for friction estimation and our novel framework for estimating reflectance. This repository contains a lot of different stuff that was used for generation of results, and will be cleaned later on once the coursework is completed and this repository will exclusively serve EF-Net`
 
 This is the code system file for running our end-to-end friction implementation on your system and testing out the results
  
@@ -19,7 +14,7 @@ Download the corresponding images by following https://github.com/JunweiZheng93/
 Download VAST dataset from https://github.com/RIVeR-Lab/vast_data/
 ```
 
-Checkpoints can be downloaded from -- [https://drive.google.com/drive/folders/1OUrhzb3kesxPONCfVrQcIYcmYhSZ9V2l?usp=drive_link](https://drive.google.com/drive/folders/1OUrhzb3kesxPONCfVrQcIYcmYhSZ9V2l?usp=drive_link)
+## Checkpoints can be downloaded from -- [https://drive.google.com/drive/folders/1OUrhzb3kesxPONCfVrQcIYcmYhSZ9V2l?usp=drive_link](https://drive.google.com/drive/folders/1OUrhzb3kesxPONCfVrQcIYcmYhSZ9V2l?usp=drive_link)
 
 Once the data folder is populated with dataset, execute 
 ```
