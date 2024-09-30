@@ -42,6 +42,25 @@ Example
 
 *Note due to preprocessing in VAST dataset it may be possible that some datapoints are dropped, it is highly recommended to use a larger batch size (greater than 100).*
 
+## Citation
+
+<hr/>
+
+If you find this code useful, please consider citing our paper:
+
+```
+@misc{prajapati2024predictivemappingspectralsignatures,
+      title={Predictive Mapping of Spectral Signatures from RGB Imagery for Off-Road Terrain Analysis}, 
+      author={Sarvesh Prajapati and Ananya Trivedi and Bruce Maxwell and Taskin Padir},
+      year={2024},
+      eprint={2405.04979},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2405.04979}, 
+}
+```
+
+<hr/>
 ## Thanks to
 * https://github.com/JunweiZheng93/MATERobot/ -- for DMS Downloader
 * https://github.com/RIVeR-Lab/vast_data/ -- VAST dataset
