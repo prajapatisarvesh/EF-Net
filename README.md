@@ -1,10 +1,6 @@
-# EF-Net: End-to-End Friction Estimation Using Intrinsic Imaging and Deep Networks
+# Predictive Mapping of Spectral Signatures from RGB Imagery for Off-Road Terrain Analysis
 
 ![Model Architecture](https://github.com/prajapatisarvesh/EF-Net/blob/main/misc/EFENET_NEW.jpg)
-
-Note:
-
-`This code is part of CS7180 Final Project, and contains our work for friction estimation and our novel framework for estimating reflectance. This repository contains a lot of different stuff that was used for generation of results, and will be cleaned later on once the coursework is completed and this repository will exclusively serve EF-Net`
 
 This is the code system file for running our end-to-end friction implementation on your system and testing out the results
  
