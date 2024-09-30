@@ -1,7 +1,5 @@
 # EF-Net: End-to-End Friction Estimation Using Intrinsic Imaging and Deep Networks
 
-Submitted by - Sarvesh, Abhinav and Rupesh
-
 ![Model Architecture](https://github.com/prajapatisarvesh/EF-Net/blob/main/misc/EFENET_NEW.jpg)
 
 Note:
@@ -43,12 +41,6 @@ Example
 `python3 train.py --model endtoend --epochs 10 --batch_size 100`
 
 *Note due to preprocessing in VAST dataset it may be possible that some datapoints are dropped, it is highly recommended to use a larger batch size (greater than 100).*
-
-### Operating system used - Ubuntu 20.04
-
-### GPU used - Nvidia RTX3090TI and Nvidia RTX4090TI
-
-## The deadline was 13th, we submitted it yesterday, since deadline was changed we did major restructuring in the report. If that's allowed we'd like to use 1 time travel day, thanks!
 
 ## Thanks to
 * https://github.com/JunweiZheng93/MATERobot/ -- for DMS Downloader
